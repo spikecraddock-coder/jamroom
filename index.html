@@ -7,6 +7,11 @@
   <title>Jamroom — Jam Partner</title>
   <meta name="description" content="A free backing band for guitarists. Pick a key and a progression, hit start, and jam along with bass, drums and keys in your browser.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2714%27 fill=%27%23111a20%27/%3E%3Ccircle cx=%2732%27 cy=%2732%27 r=%2716%27 fill=%27none%27 stroke=%27%23edb875%27 stroke-width=%278%27/%3E%3C/svg%3E">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Jamroom">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
@@ -244,5 +249,9 @@
     </section>
   </aside>
   <script type="module" src="./src/main.js"></script>
+  <script>
+    // Offline support + installable app. Skipped quietly where service workers are unavailable.
+    if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
+  </script>
 </body>
 </html>

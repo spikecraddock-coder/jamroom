@@ -23,6 +23,10 @@ Settings (☰ button, or **M**) hold the mixer, practice loop, Band Leader rando
 
 Standard and quick-change 12-bar blues (major and minor), pop four-chord loops and verse/chorus forms, 1960s-style and 1950s I–vi–IV–V loops, rock I–IV–V, and an original verse/chorus/bridge. They are original arrangements, not copies of particular songs. You can also build your own in the **Custom chart editor** (1–32 bars, one chord or two half-bar changes), and export or import charts as JSON.
 
+## Install and offline use
+
+Jamroom is a progressive web app. In Chrome, Edge or Android, use the browser's **Install** option; on iPhone and iPad use Share → Add to Home Screen. After the first full load (the sounds get cached) it also works offline. App code is fetched fresh when online, so updates arrive on the next visit. If you change the sound files, bump `VERSION` in `sw.js`.
+
 ## Running it
 
 It is a static site with no build step. Serve the folder with any static web server, because the browser blocks ES modules from `file://` pages. For example:
@@ -43,6 +47,7 @@ To publish, upload the folder to any static host (GitHub Pages, Netlify, Cloudfl
 - `src/rhythm-arranger.js`: bass and drum pattern choices.
 - `src/keys.js`: the electric piano and organ.
 - `src/main.js`: interface wiring.
+- `manifest.webmanifest`, `sw.js`, `icons/`: install and offline support.
 - `assets/audio/`: bass and drum samples.
 - `assets/ATTRIBUTION.md`, `assets/licenses/`: sample sources and licenses.
 
