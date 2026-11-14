@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111a20">
+  <title>Jamroom — Jam Partner</title>
+  <meta name="description" content="A free backing band for guitarists. Pick a key and a progression, hit start, and jam along with bass, drums and keys in your browser.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2714%27 fill=%27%23111a20%27/%3E%3Ccircle cx=%2732%27 cy=%2732%27 r=%2716%27 fill=%27none%27 stroke=%27%23edb875%27 stroke-width=%278%27/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">◉</span><span>JAMROOM</span></div>
+      <div class="session-summary">
+        <strong id="summarySong">12-bar blues in A</strong>
+        <span id="summaryFeel">Driving shuffle</span>
+        <span id="summaryTempo">94 BPM</span>
+      </div>
+      <div class="top-actions">
+        <div class="live-key">
+          <label class="live-key-group" for="keySelect"><span>KEY</span><select id="keySelect" aria-label="Jam key">
+            <option value="C" selected>C</option><option value="Db">D♭</option><option value="D">D</option><option value="Eb">E♭</option>
+            <option value="E">E</option><option value="F">F</option><option value="F#">F♯ / G♭</option>
+            <option value="G">G</option><option value="Ab">A♭</option><option value="A">A</option><option value="Bb">B♭</option><option value="B">B</option>
+          </select></label>
+          <label class="live-key-group live-mode-group" for="modeSelect"><span>MODE</span><select id="modeSelect" aria-label="Jam mode">
+            <option value="major" selected>Major</option><option value="minor">Minor</option><option value="custom">Custom</option>
+          </select></label>
+          <label class="live-key-group live-mode-group live-form-group" for="formSelect"><span>SONG</span><select id="formSelect" aria-label="Progression">
+          <option value="standard">Standard 12-bar blues</option>
+          <option value="quick">Quick-change 12-bar blues</option>
+          <option value="slowMinorBlues">Slow minor 12-bar blues</option>
+          <option value="quickMinorBlues">Quick-change minor 12-bar blues</option>
+          <option value="popLoop">Pop four-chord loop</option>
+          <option value="popSong">Pop verse + chorus</option>
+          <option value="sixtiesLoop">1960s pop loop</option>
+          <option value="sixtiesSong">1960s pop verse + chorus</option>
+          <option value="popMinorLoop">Minor pop four-chord loop</option>
+          <option value="popMinorSong">Minor pop verse + chorus</option>
+          <option value="sixtiesMinorLoop">1960s minor pop loop</option>
+          <option value="sixtiesMinorSong">1960s minor verse + chorus</option>
+          <option value="fiftiesLoop">1950s I–vi–IV–V</option>
+          <option value="fiftiesMinorLoop">Minor 1950s I–VI–iv–V</option>
+          <option value="rockLoop">Rock I–IV–V</option>
+          <option value="rockMinorLoop">Minor rock loop</option>
+          <option value="bridgeSong">Original verse · chorus · bridge</option>
+          <option value="bridgeMinorSong">Minor verse · chorus · bridge</option>
+          <option value="custom">Custom chart</option>
+        </select></label>
+          <small id="keyChangeHint">live</small>
+        </div>
+      <div class="setting tempo-setting header-tempo">
+        <div class="setting-heading"><button type="button" class="tempo-step" data-step="-2" aria-label="Slower">−</button><label for="tempo">Tempo</label><strong><span id="tempoValue">94</span> BPM</strong><button type="button" class="tempo-step" data-step="2" aria-label="Faster">+</button></div>
+        <div class="tempo-control">
+          <div class="tempo-presets" role="group" aria-label="Tempo presets">
+            <button class="preset-button" type="button" data-bpm="76">Slow</button>
+            <button class="preset-button active" type="button" data-bpm="94">Medium</button>
+            <button class="preset-button" type="button" data-bpm="112">Up</button>
+          </div>
+          <input id="tempo" type="range" min="60" max="140" step="1" value="94" aria-label="Tempo in beats per minute">
+        </div>
+      </div>
+        <button class="button button-quiet" id="menuToggle" type="button" aria-expanded="false" aria-controls="drawer" title="Shortcut: M">☰ Settings</button>
+        <button class="button button-quiet full-screen" id="fullScreen" type="button" aria-label="Enter full screen">⛶</button>
+      </div>
+    </header>
+
+    <main class="stage" id="stage">
+      <section class="performance" aria-label="Live chord and jam cue">
+        <div class="position-line">
+          <span class="role-chip" id="roleChip">READY</span>
+          <span id="positionText">CHORUS 01 · BAR 01 OF 12</span>
+        </div>
+        <div class="role-caption" id="roleCaption">Click Start and play along.</div>
+        <div class="spotlight">
+          <div class="chord-area">
+            <div class="now-label" id="nowLabel">PLAYING NOW</div>
+            <div class="chord" id="currentChord" aria-live="polite">A<span class="quality">7</span></div>
+            <div class="next-changes">
+              <div class="next-card"><span>NEXT CHANGE</span><strong id="nextChord">D7</strong><small id="nextTime">in 4 bars</small></div>
+              <div class="next-card then-card"><span>THEN</span><strong id="thenChord">A7</strong><small id="thenTime">in 6 bars</small></div>
+            </div>
+          </div>
+          <section class="grip-card" aria-label="Current chord fingering">
+            <div class="grip-heading">
+              <div><span class="eyebrow">CURRENT CHORD</span><h2 id="gripChord">A7 shape</h2></div>
+              <div class="voicing-switch" role="group" aria-label="Chord voicing">
+                <button type="button" class="voicing-button active" data-voicing="open">Open</button>
+                <button type="button" class="voicing-button" data-voicing="barre">Barre</button>
+              </div>
+            </div>
+            <div id="chordDiagram" class="chord-diagram"></div>
+            <p class="grip-note" id="gripNote">Standard tuning · E A D G B E</p>
+            <div class="next-grip" aria-label="Next chord fingering"><div><span class="eyebrow">NEXT SHAPE</span><strong id="nextGripChord">D</strong><small id="nextGripNote">Open position</small></div><div id="nextChordDiagram" class="next-chord-diagram"></div></div>
+          </section>
+        </div>
+        <div class="beat-row">
+          <div class="beats" aria-label="Beat indicator"><span></span><span></span><span></span><span></span></div>
+          <span class="beat-caption" id="beatCaption">BEAT 1 OF 4</span>
+        </div>
+      </section>
+    </main>
+
+    <section class="form-map" aria-label="Chord progression">
+      <div class="map-heading"><h2 id="mapTitle">12-bar blues in A</h2><span id="mapStatus">Bar 1 of 12 · Chorus 1</span></div>
+      <div class="bars" id="bars"></div>
+    </section>
+
+    <footer class="control-bar">
+      <div class="primary-controls">
+        <button class="button button-primary" id="play" type="button">▶ <span>Start jam</span></button>
+        <button class="button" id="stop" type="button" disabled>■ <span>Stop</span></button>
+        <button class="button button-cue" id="lift" type="button" disabled title="Shortcut: D · the band plays louder and busier" aria-pressed="false">Push harder</button>
+        <button class="button button-cue" id="stopTime" type="button" disabled title="Shortcut: S · for 4 bars the band only hits beat one, leaving space for you">Hits only</button>
+        <button class="button" id="quiet" type="button" disabled title="Shortcut: B · the band plays softer from the next chorus">Quieter</button>
+        <button class="button button-end" id="end" type="button" disabled>End jam</button>
+      </div>
+      <div class="live-status" id="status" role="status" aria-live="polite">Ready. Use your laptop’s default audio output.</div>
+    </footer>
+  </div>
+
+  <div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+  <aside class="drawer" id="drawer" aria-label="Settings" hidden>
+    <div class="drawer-head"><h2>Settings</h2><button class="button button-quiet" id="drawerClose" type="button">Close ✕</button></div>
+    <section class="settings-panel" aria-label="Band volume mixer">
+      <header class="settings-panel-heading"><h2>Mixer</h2></header>
+        </div>
+        <section class="mixer" aria-label="Band volume mixer">
+          
+          <label class="mixer-channel" for="bassVolume">
+            <span class="mixer-channel-heading"><span>Bass</span><output id="bassVolumeValue" for="bassVolume">80%</output></span>
+            <input id="bassVolume" type="range" min="0" max="100" step="1" value="80">
+          </label>
+          <label class="mixer-channel" for="drumVolume">
+            <span class="mixer-channel-heading"><span>Drums</span><output id="drumVolumeValue" for="drumVolume">80%</output></span>
+            <input id="drumVolume" type="range" min="0" max="100" step="1" value="80">
+          </label>
+          <label class="mixer-channel" for="keysVolume">
+            <span class="mixer-channel-heading"><span>Keys</span><output id="keysVolumeValue" for="keysVolume">80%</output></span>
+            <input id="keysVolume" type="range" min="0" max="100" step="1" value="80">
+          </label>
+          <label class="mixer-channel" for="masterVolume">
+            <span class="mixer-channel-heading"><span>Master</span><output id="masterVolumeValue" for="masterVolume">115%</output></span>
+            <input id="masterVolume" type="range" min="0" max="175" step="1" value="115" aria-label="Master output volume">
+          </label>
+        </section>
+    </section>
+    <section class="settings-panel" aria-label="Practice">
+      <header class="settings-panel-heading"><h2>Practice &amp; band leader</h2><p>Click bars in the progression to pick a loop</p></header>
+      <div class="practice-panel">
+        <div class="bandleader-call"><button class="button button-quiet" id="bandLeaderCall" type="button">Band Leader · Random call</button><span id="bandLeaderCallout" aria-live="polite">Pick a random key and progression.</span></div>
+        <div class="practice-controls"><span id="practiceRangeLabel">Click bars to choose a practice loop</span><label class="setting"><span>Count-in</span><select id="practiceCount"><option value="1">1 bar</option><option value="2">2 bars</option><option value="0">Off</option></select></label><button class="button button-quiet" id="practiceLoop" type="button">Loop selection</button><button class="button button-quiet" id="practiceFaster" type="button" disabled>Faster +2 BPM</button><button class="button button-quiet" id="fullJam" type="button">Full jam</button></div>
+      </div>
+    </section>
+    <section class="settings-panel setup-drawer" aria-labelledby="setupHeading">
+      <header class="settings-panel-heading"><h2 id="setupHeading">Jam setup</h2><p>Progression, harmony, tempo and band choices</p></header>
+      <section class="setup" aria-label="Jam settings">
+      <label class="setting" id="chordStyleControl">
+        <span>Blues chords</span>
+        <select id="chordStyleSelect">
+          <option value="triads" selected>Triads</option>
+          <option value="sevenths">Sevenths</option>
+        </select>
+      </label>
+      <div class="setting written-harmony" id="writtenHarmony" hidden>
+        <span>Harmony</span>
+        <strong id="writtenHarmonyValue">Written chords</strong>
+      </div>
+      <label class="setting">
+        <span>Feel</span>
+        <select id="feelSelect">
+          <option value="shuffle">Driving shuffle</option>
+          <option value="boogie">Boogie shuffle</option>
+          <option value="light">Light swing</option>
+          <option value="straight">Straight backbeat</option>
+          <option value="halfTime">Half-time pop</option>
+        </select>
+      </label>
+      <label class="setting fill-setting">
+        <span>Drum fills</span>
+        <select id="fillSelect">
+          <option value="off">Off</option>
+          <option value="light">At section changes</option>
+          <option value="regular" selected>Every 4 bars</option>
+          <option value="frequent">Every 2 bars</option>
+        </select>
+      </label>
+      <p class="setup-note" id="setupNote">Change key while playing; it starts with the next chorus. Play rhythm or solo whenever you like.</p>
+      <label class="setting"><span>Capo position</span><select id="capoSelect"><option value="0">No capo</option><option value="1">1st fret</option><option value="2">2nd fret</option><option value="3">3rd fret</option><option value="4">4th fret</option><option value="5">5th fret</option><option value="6">6th fret</option><option value="7">7th fret</option><option value="8">8th fret</option><option value="9">9th fret</option><option value="10">10th fret</option><option value="11">11th fret</option><option value="12">12th fret</option></select></label>
+      <div class="setting chordal-setting"><span>Chordal bandmate</span><div class="inline-controls"><select id="chordalSelect" aria-label="Chordal bandmate"><option value="piano" selected>Electric piano</option><option value="organ">Organ</option></select><label><input type="checkbox" id="chordalEnabled"> On</label></div></div>
+      </section>
+
+      <details class="custom-editor" id="customEditor">
+        <summary><span>Custom chart editor</span><small>1–32 bars · one chord or two half-bar changes</small></summary>
+        <div class="custom-toolbar">
+          <label class="setting"><span>Saved charts</span><select id="savedChartSelect"><option value="">New chart</option></select></label>
+          <label class="setting"><span>Chart name</span><input id="customName" type="text" maxlength="40" value="My jam" /></label>
+          <label class="setting"><span>Bars</span><input id="customLength" type="number" min="1" max="32" value="8" /></label>
+          <div class="custom-actions"><button class="button button-quiet" id="newChart" type="button">New</button><button class="button button-quiet" id="duplicateChart" type="button">Duplicate</button><button class="button button-quiet" id="deleteChart" type="button">Delete</button><button class="button button-primary" id="saveChart" type="button">Save chart</button><button class="button button-quiet" id="exportChart" type="button">Export</button><label class="button button-quiet import-button">Import<input id="importChart" type="file" accept="application/json,.json"></label></div>
+        </div>
+        <div class="custom-bars" id="customBars"></div>
+        <p class="custom-note">The key selector transposes every chart chord together. A key change during playback begins on the next full chart loop.</p>
+      </details>
+    </section>
+
+    <section class="settings-panel rhythm-options" id="rhythmOptions" aria-labelledby="rhythmHeading">
+      <header class="settings-panel-heading"><h2 id="rhythmHeading">Band sound &amp; playing style</h2><p>Compare bass lines, players, and sounds while the jam runs</p></header>
+      <div class="rhythm-grid">
+        <label class="setting"><span>Player controls</span><select id="playerModeSelect">
+          <option value="linked">Whole band together</option><option value="separate">Bass and drums separately</option>
+        </select></label>
+        <label class="setting" id="bandPlayerControl"><span>Whole-band personality</span><select id="bandPlayerSelect">
+          <option value="basic">Basic</option><option value="pocket" selected>Pocket</option><option value="expressive">Expressive</option>
+        </select></label>
+        <label class="setting rhythm-independent" hidden><span>Bassist</span><select id="bassPlayerSelect">
+          <option value="basic">Basic</option><option value="pocket" selected>Pocket</option><option value="melodic">Melodic</option>
+        </select></label>
+        <label class="setting rhythm-independent" hidden><span>Drummer</span><select id="drumPlayerSelect">
+          <option value="basic">Basic</option><option value="pocket" selected>Pocket</option><option value="expressive">Expressive</option>
+        </select></label>
+        <label class="setting"><span>Bass note pattern</span><select id="bassPatternSelect">
+          <option value="roots">Roots &amp; fifths</option>
+          <option value="chordTones" selected>Root · third · fifth</option>
+          <option value="walking">Walking bass</option>
+          <option value="boogie">Boogie pulse</option>
+          <option value="octaves">Pop octaves</option>
+        </select></label>
+        <label class="setting"><span>Bass sound</span><select id="bassSoundSelect">
+          <option value="finger">Fingered electric</option><option value="warm">Rounded electric</option>
+          <option value="pick">Picked electric</option><option value="synth">Synth bass</option>
+          <option value="softSynth">Soft synth</option>
+        </select></label>
+        <label class="setting"><span>Drum sound</span><select id="drumSoundSelect">
+          <option value="acoustic">Acoustic kit</option><option value="tight">Tight kit</option><option value="electronic">Electronic kit</option>
+        </select></label>
+        <p class="rhythm-note">Changes land at the next bar. Whole-band Expressive pairs a melodic bassist with an expressive drummer. Switch to separate players to compare each part.</p>
+      </div>
+    </section>
+    <section class="settings-panel" aria-label="Credits">
+      <header class="settings-panel-heading"><h2>Credits</h2></header>
+      <p class="credits">Drum samples provided by DrumGizmo.org (MuldjordKit by Lars Muldjord, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>). Bass samples: Finger Bass YR and Picked Bass YR by Andrea Biasior (CC0), via <a href="https://freepats.zenvoid.org/" target="_blank" rel="noopener">FreePats</a>. Jamroom is open source under the MIT license.</p>
+    </section>
+  </aside>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
